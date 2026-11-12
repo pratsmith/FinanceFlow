@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: financeflow
+  template:
+    metadata:
+      labels:
+        app: financeflow
+    spec:
+      containers:
+        - name: financeflow
+          image: financeflow:v1
+          imagePullPolicy: Never
+          env:
+            - name: AWS_ENDPOINT_URL
+              value: "http://host.minikube.internal:4566"
+          ports:
+            - containerPort: 8501
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: financeflow-service
+spec:
+  type: NodePort
+  selector:
+    app: financeflow
+  ports:
+    - port: 8501
+      targetPort: 8501
+      nodePort: 30080
